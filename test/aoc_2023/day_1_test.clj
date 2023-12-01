@@ -79,6 +79,6 @@ zoneight234
            (calibration-value-with-words part-2-example-data)))))
 
 (deftest part-2-test
-  (testing "Part one is answered correctly for the input data"
+  (testing "Part two is answered correctly for the input data"
     (is (= 54985
            (calibration-value-with-words input-data)))))
