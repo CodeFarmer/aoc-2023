@@ -2,6 +2,10 @@
   (:require [aoc-2023.core :refer :all]
             [clojure.string :as str]))
 
+;; FIXME: Regex was once again a mistake ("Now you have two
+;; problems") that caused the bug in part 2; fixing with lookahead is
+;; just a sign of how wrong it was.  Come back and remove them.
+
 (defn first-and-last [astr]
   (intify-seq
    (let [rs (re-seq #"\d" astr)]
