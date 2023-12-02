@@ -22,14 +22,8 @@
   (letfn [(line-possible? [[id gamestr]] (possible? known-bag gamestr))]
     (map first (filter line-possible? (map id-and-line lines)))))
 
-(defn minimum-counts
-  ([aseq] (minimum-counts {} aseq))
-  ([acc aseq]
-   (if (empty? aseq)
-     acc
-     (recur 
-      (merge-with max acc (first aseq))
-      (rest aseq)))))
+(defn minimum-counts [aseq]
+  (reduce (partial merge-with max) {} aseq))
 
 (defn minimum-counts-for-line [astr]
   (let [draws (map draw-counts (str/split astr #"; "))]
