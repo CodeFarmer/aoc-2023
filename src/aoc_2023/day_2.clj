@@ -10,9 +10,9 @@
   (into {} (map tok2pair (str/split astr #", "))))
 
 (defn possible? [known-bag astr]
-  (let [draws (map draw-counts (str/split astr #"; "))]
-    (letfn [(too-big [[k v]] (> v (get known-bag k)))]
-      (not (some #(some too-big %) draws)))))
+  (letfn [(too-big [[k v]] (> v (get known-bag k)))]
+    (not (some #(some too-big %)
+               (map draw-counts (str/split astr #"; "))))))
 
 (defn id-and-line [astr]
   (let [[id-str game-str] (str/split astr #": ")]
