@@ -26,8 +26,7 @@
   (reduce (partial merge-with max) {} aseq))
 
 (defn minimum-counts-for-line [astr]
-  (let [draws (map draw-counts (str/split astr #"; "))]
-    (minimum-counts draws)))
+  (minimum-counts (map draw-counts (str/split astr #"; "))))
 
 (defn power [amap]
   (reduce #(* %1 (second %2)) 1 amap))
