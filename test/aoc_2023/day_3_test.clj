@@ -45,3 +45,17 @@
 (deftest part-1-test
   (is (= 509115 (reduce + (part-numbers input-data)))))
 
+;;;; part 2
+
+(deftest gear-finding-test
+  (testing "find gears by returning their pairs of part numbers"
+    (is (= [[467 35] [755 598]]
+           (find-gear-parts sample-data)))))
+
+(deftest ratio-finding-test
+  (is (= 467835
+         (reduce + (map #(apply (partial *) %) (find-gear-parts sample-data))))))
+
+(deftest part-2-test
+  (is (= 0
+         (reduce + (map #(apply (partial *) %) (find-gear-parts input-data))))))

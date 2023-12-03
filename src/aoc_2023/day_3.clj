@@ -32,15 +32,15 @@
            (digits c))))
 
 (defn sigil-at? [i astr]
-  (cond (< i 0) false
+  (cond (nil? astr) false
+        (< i 0) false
         (>= i (count astr)) false
         :default (sigil? (.charAt astr i))))
 
 (defn part-numbers
 
   ([lines]
-   (let [empty-line (apply str (repeat (count (first lines)) \.))]
-     (part-numbers [] (into [empty-line] (conj lines empty-line)))))
+   (part-numbers [] (into [nil] lines)))
 
   ([acc lines]
    (if (empty? lines) acc
@@ -60,3 +60,38 @@
            (recur (into acc (map parse-long (map second (filter part-number? indexed-nums))))
                   (rest lines)))))))
 
+
+(defn digit-at? [i astr]
+  (cond (nil? astr) false
+        (< i 0) false
+        (>= i (count astr)) false
+        :default (digits (.charAt astr i))))
+
+
+(defn find-gear-parts
+  ([lines]
+   (find-gear-parts [] (into [nil] lines)))
+   
+  ([acc lines]
+   (if (empty? lines)
+     acc
+     (let [[prev current next & etc] lines
+           potential-gear-locs (filter #(= \* (.charAt current %)) (range 0 (count current)))
+           parts (-> []
+                     (into (index-number-strings prev))
+                     (into (index-number-strings current))
+                     (into (index-number-strings next)))]
+
+       (letfn [(adjacent? [loc [i number-string]]
+                 (and (<= (dec i) loc (+ i (count number-string)))))
+               (adjacent-parts [g]
+                 (->> parts
+                      (filter #(adjacent? g %))
+                      (map second)
+                      (map parse-long)))]
+
+         (recur (into acc
+                      (->> potential-gear-locs
+                           (map adjacent-parts)
+                           (filter #(= 2 (count %)))))
+                (rest lines)))))))
