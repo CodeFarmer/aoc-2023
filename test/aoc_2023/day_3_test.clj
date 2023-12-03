@@ -57,5 +57,5 @@
          (reduce + (map #(apply (partial *) %) (find-gear-parts sample-data))))))
 
 (deftest part-2-test
-  (is (= 0
+  (is (= 75220503
          (reduce + (map #(apply (partial *) %) (find-gear-parts input-data))))))
