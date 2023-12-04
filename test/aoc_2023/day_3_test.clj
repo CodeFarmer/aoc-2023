@@ -54,8 +54,8 @@
 
 (deftest ratio-finding-test
   (is (= 467835
-         (reduce + (map #(apply (partial *) %) (find-gear-parts sample-data))))))
+         (reduce + (map #(apply * %) (find-gear-parts sample-data))))))
 
 (deftest part-2-test
   (is (= 75220503
-         (reduce + (map #(apply (partial *) %) (find-gear-parts input-data))))))
+         (reduce + (map #(apply * %) (find-gear-parts input-data))))))
