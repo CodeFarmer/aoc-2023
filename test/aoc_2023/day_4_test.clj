@@ -56,7 +56,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"
            (reduce + (map second (eventual-counts sample-data-with-counts)))))))
 
 (deftest part-2-test
-  (is (= 0
+  (is (= 15455663
          (reduce +
                  (map second
                       (eventual-counts (->> input-data
