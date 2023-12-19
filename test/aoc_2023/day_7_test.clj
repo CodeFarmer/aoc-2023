@@ -103,7 +103,7 @@ QQQJA 483"
 (deftest part-1-test
   (let [hands (map first input-data)
         hand-ranks (generate-hand-ranks hands)]
-    (is [= 0
+    (is [= 250453939
          (reduce +
                  (map #(apply (partial winnings hand-ranks) %)
                       input-data))])))
