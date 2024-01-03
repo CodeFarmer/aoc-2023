@@ -63,8 +63,11 @@ frs: qnr lhk lsr"
 (deftest count-disconnected-graphs-test
   (let [agraph (parse-graph example-data)
         bgraph (-> agraph
-                   (disconnect "hfx" "pxl")
+                   (disconnect "hfx" "pzl")
                    (disconnect "bvb" "cmg")
                    (disconnect "nvd" "jqt"))]
     (is (= 1 (count (sub-graphs agraph))))
-    (is (= 2 (count (sub-graphs bgraph))))))
+    (let [sub-graphs (sub-graphs bgraph)]
+      (is (= 2 (count sub-graphs)))
+      (is (= 54 (* (count (keys (first sub-graphs)))
+                   (count (keys (second sub-graphs)))))))))
