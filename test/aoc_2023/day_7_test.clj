@@ -97,7 +97,7 @@ QQQJA 483"
 (def input-data
   (map sample-splitter
        (partition 2
-                  (str/split (slurp "input-7.txt")
+                  (str/split (slurp "aoc-2023-inputs/input-7.txt")
                              #"\s+"))))
 
 (deftest part-1-test

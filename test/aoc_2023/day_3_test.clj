@@ -39,7 +39,7 @@
 
 (def input-data
   (str/split
-   (slurp "input-3.txt")
+   (slurp "aoc-2023-inputs/input-3.txt")
    #"\n"))
 
 (deftest part-1-test

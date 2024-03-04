@@ -29,7 +29,7 @@ treb7uchet"
 
 (def input-data
   (str/split
-   (slurp "input-1.txt")
+   (slurp "aoc-2023-inputs/input-1.txt")
    #"\n"))
 
 (deftest part-1-test

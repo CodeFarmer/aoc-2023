@@ -50,7 +50,7 @@ Game 5: 6 red, 1 blue, 3 green; 2 blue, 1 red, 2 green"
 
 (def input-data
   (str/split
-   (slurp "input-2.txt")
+   (slurp "aoc-2023-inputs/input-2.txt")
    #"\n"))
 
 (deftest part-1-test

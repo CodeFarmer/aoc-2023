@@ -74,7 +74,7 @@ humidity-to-location map:
     (is (= 35 (walk-maps 13 maps)))))
 
 (def input-data
-  (str/split (slurp "input-5.txt") #"\n\n"))
+  (str/split (slurp "aoc-2023-inputs/input-5.txt") #"\n\n"))
 
 (deftest part-1-test
   (let [{:keys [seeds maps]} (parse-almanac input-data)]

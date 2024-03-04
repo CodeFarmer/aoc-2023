@@ -28,7 +28,7 @@ Card 6: 31 18 13 56 72 | 74 77 10 23 35 67 36 11"
                            (map #(apply score-card %)))))))
 
 (def input-data
-  (str/split (slurp "input-4.txt")
+  (str/split (slurp "aoc-2023-inputs/input-4.txt")
              #"\n"))
 
 (deftest part-1-test
