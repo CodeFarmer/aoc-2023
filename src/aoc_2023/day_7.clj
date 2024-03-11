@@ -50,17 +50,24 @@
          ((first ranks) astr) ord
          :default (recur (rest ranks) (inc ord) astr))))
 
-(def card-ranking "AKQJT987654321")
-(defn -card-ordinal [achar]
-  ;; bah to Java's indexOf requiring String arg
-  (.indexOf card-ranking (str achar)))
+(def standard-card-ranking "AKQJT987654321")
+(def joker-card-ranking "AKQT987654321J")
 
-(defn -tie-breaker [astr bstr]
-  (let [aord (-card-ordinal (first astr))
-        bord (-card-ordinal (first bstr))]
-    (cond (empty? astr) nil
-          (not (= aord bord)) (< aord bord)
-          :default (recur (rest astr) (rest bstr)))))
+(defn -card-ordinal
+  [achar ranking-str]
+  ;; bah to Java's indexOf requiring String arg
+  (.indexOf ranking-str (str achar)))
+
+(defn -tie-breaker
+  ([astr bstr]
+   (-tie-breaker astr bstr standard-card-ranking))
+  ([astr bstr card-ranking]
+   (let [aord (-card-ordinal (first astr) card-ranking)
+         bord (-card-ordinal (first bstr) card-ranking)]
+     (cond (empty? astr) nil
+           (not (= aord bord)) (< aord bord)
+           :default (recur (rest astr) (rest bstr) card-ranking)))))
+
 
 (defn stronger? [astr bstr]
   (let [aord (-strength-ordinal astr)
@@ -69,8 +76,11 @@
       (-tie-breaker astr bstr)
       (< aord bord))))
 
-(defn generate-hand-ranks [hands]
-  (into [] (reverse (sort stronger? hands))))
+(defn generate-hand-ranks
+  ([hands]
+   (generate-hand-ranks hands stronger?))
+  ([hands stronger-fn]
+   (into [] (sort (complement stronger-fn) hands))))
 
 (defn hand-rank [hand-ranks hand]
   ;; this can certainly be made faster just with the sort
@@ -78,3 +88,16 @@
 
 (defn winnings [hand-ranks hand bid]
   (*  bid (hand-rank hand-ranks hand)))
+
+;; OK this is brute force along two dimensions
+(def best-j-substitution
+  (memoize (fn [astr]
+             (last (generate-hand-ranks (for [x (disj (into #{\A} astr) \J)]
+                                          (str/replace astr \J x)))))))
+
+(defn stronger-jokers? [astr bstr]
+  (let [aord (-strength-ordinal (best-j-substitution astr))
+        bord (-strength-ordinal (best-j-substitution bstr))]
+    (if (= aord bord)
+      (-tie-breaker astr bstr joker-card-ranking)
+      (< aord bord))))

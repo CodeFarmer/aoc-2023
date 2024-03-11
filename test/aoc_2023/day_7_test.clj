@@ -107,3 +107,28 @@ QQQJA 483"
          (reduce +
                  (map #(apply (partial winnings hand-ranks) %)
                       input-data))])))
+
+;; part 2
+
+(deftest joker-substitution-test
+  (is (= "T5555" (best-j-substitution "T55J5")))
+  (is (= "KTTTT" (best-j-substitution "KTJJT")))
+  (is (= "QQQQA" (best-j-substitution "QQQJA"))))
+
+(deftest winnings-with-jokers-test
+  (let [hands (map first sample-data)
+        hand-ranks (generate-hand-ranks hands stronger-jokers?)]
+    (is [= 5905
+         (reduce +
+                 (map #(apply (partial winnings hand-ranks) %)
+                      sample-data))])))
+
+
+(deftest part-2-test
+  (testing "winnings are calculated correctly with Joker substitution for the whole input"
+    (let [hands (map first input-data)
+        hand-ranks (generate-hand-ranks hands stronger-jokers?)]
+    (is [= 248652697
+         (reduce +
+                 (map #(apply (partial winnings hand-ranks) %)
+                      input-data))]))))
