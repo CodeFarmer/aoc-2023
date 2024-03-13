@@ -23,3 +23,11 @@
    (cond (empty? seqs) p
          (empty? (first seqs)) p
          :default (recur (+ p (last (first seqs))) (rest seqs)))))
+
+(defn predict-previous
+  ([seqs]
+   (predict-previous 0 seqs))
+  ([p seqs]
+   (cond (empty? seqs) p
+         (empty? (first seqs)) p
+         :default (recur (- (first (first seqs)) p) (rest seqs)))))

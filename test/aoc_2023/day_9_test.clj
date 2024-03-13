@@ -40,3 +40,14 @@
   (is (= 1581679977 (reduce + (->> input-data
                                    (map repeated-diff)
                                    (map predict-next))))))
+
+;; part 2
+
+(deftest backwards-prediction-test
+  (testing "Given a sequentially-subtracted sequence of number sequences, the correct previous number is predicted for the last sequence"
+    (is (= 5 (predict-previous (repeated-diff [10 13 16 21 30 45]))))))
+
+(deftest part-1-test
+  (is (= 889 (reduce + (->> input-data
+                            (map repeated-diff)
+                            (map predict-previous))))))
