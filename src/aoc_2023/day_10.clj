@@ -30,18 +30,17 @@
           [x' y'])))
 
 (defn -walk-loop
-  [walked pipe-map]
-  (let [p (first walked)
-        exits (if (= \S (get-tile pipe-map p)) (guess-exits pipe-map p)
-                  (find-steps pipe-map (first walked)))
+  [walked pipe-map current-point]
+  (let [exits (if (= \S (get-tile pipe-map current-point)) (guess-exits pipe-map current-point)
+                  (find-steps pipe-map current-point))
         
-        allowed-exit (first (remove #(some #{%} walked) exits))]
-    (if (nil? allowed-exit) walked
-        (recur (conj walked allowed-exit) pipe-map))))
+        allowed-exit (first (remove walked exits))]
+    (if (nil? allowed-exit) (conj walked current-point)
+        (recur (conj walked current-point) pipe-map allowed-exit))))
 
 (defn walk-loop
   [pipe-map start-point]
-  (-walk-loop (list start-point) pipe-map))
+  (-walk-loop #{} pipe-map start-point))
 
 (defn find-start
   ([pipe-map]

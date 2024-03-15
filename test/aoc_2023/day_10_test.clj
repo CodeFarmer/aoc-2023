@@ -33,7 +33,7 @@
 
 (deftest loop-walking-test
   (testing "It is possible to follow a loop of pipe and record the route taken"
-    (is (= [[1 2] [1 3] [2 3] [3 3] [3 2] [3 1] [2 1] [1 1]]
+    (is (= #{[1 2] [1 3] [2 3] [3 3] [3 2] [3 1] [2 1] [1 1]}
            (walk-loop square-loop-map [1 1])))))
 
 (def other-loop-map
