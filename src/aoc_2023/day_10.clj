@@ -50,3 +50,13 @@
        (let [x (.indexOf (first pipe-map) (int \S))]
          (if (not= -1 x) [x y]
              (recur (inc y) (rest pipe-map)))))))
+
+;; assume the map is rectangular eh
+(defn find-edges [pipe-map]
+  (let [w (count (first pipe-map))
+        h (count pipe-map)]
+    (-> #{}
+        (into (map (fn [x] [x 0]) (range 0 w)))
+        (into (map (fn [y] [0 y]) (range 1 (dec h))))
+        (into (map (fn [y] [(dec w) y]) (range 1 (dec h))))
+        (into (map (fn [x] [x (dec w)]) (range 0 w))))))

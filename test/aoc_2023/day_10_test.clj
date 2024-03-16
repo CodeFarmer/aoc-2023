@@ -54,3 +54,12 @@ LJ..."
 
 (deftest part-1-test
   (is (= 6697 (/ (count (walk-loop input-map (find-start input-map))) 2))))
+
+(deftest edges-test
+  (testing "the set of edge squares of a tube map are found"
+    (is (= #{[0 0] [1 0] [2 0] [3 0] [4 0]
+             [0 1]                   [4 1]
+             [0 2]                   [4 2]
+             [0 3]                   [4 3]
+             [0 4] [1 4] [2 4] [3 4] [4 4]}
+           (find-edges square-loop-map)))))
