@@ -1,6 +1,7 @@
 (ns aoc-2023.day-10
   (:require [aoc-2023.core :refer :all]
-            [clojure.string :as str]))
+            [clojure.string :as str]
+            [clojure.set :as set]))
 
 (def exit-offsets
   {
@@ -29,6 +30,15 @@
               :when (contains? (find-steps pipe-map [x' y']) [x y])]
           [x' y'])))
 
+(defn find-start
+  ([pipe-map]
+   (find-start 0 pipe-map))
+  ([y pipe-map]
+   (if (empty? pipe-map) nil
+       (let [x (.indexOf (first pipe-map) (int \S))]
+         (if (not= -1 x) [x y]
+             (recur (inc y) (rest pipe-map)))))))
+
 (defn -walk-loop
   [walked pipe-map current-point]
   (let [exits (if (= \S (get-tile pipe-map current-point)) (guess-exits pipe-map current-point)
@@ -39,17 +49,10 @@
         (recur (conj walked current-point) pipe-map allowed-exit))))
 
 (defn walk-loop
-  [pipe-map start-point]
-  (-walk-loop #{} pipe-map start-point))
-
-(defn find-start
   ([pipe-map]
-   (find-start 0 pipe-map))
-  ([y pipe-map]
-   (if (empty? pipe-map) nil
-       (let [x (.indexOf (first pipe-map) (int \S))]
-         (if (not= -1 x) [x y]
-             (recur (inc y) (rest pipe-map)))))))
+   (walk-loop pipe-map (find-start pipe-map)))
+  ([pipe-map start-point]
+   (-walk-loop #{} pipe-map start-point)))
 
 ;; assume the map is rectangular eh
 (defn find-edges [pipe-map]
@@ -59,4 +62,39 @@
         (into (map (fn [x] [x 0]) (range 0 w)))
         (into (map (fn [y] [0 y]) (range 1 (dec h))))
         (into (map (fn [y] [(dec w) y]) (range 1 (dec h))))
-        (into (map (fn [x] [x (dec w)]) (range 0 w))))))
+        (into (map (fn [x] [x (dec h)]) (range 0 w))))))
+
+(defn find-flood-seeds [pipe-map loop]
+  (set/difference (find-edges pipe-map) loop))
+
+(defn flood-fill
+  ([pipe-map loop-squares]
+   (let [seeds (find-flood-seeds pipe-map loop-squares)]
+     (flood-fill (into #{} seeds)
+                 (into clojure.lang.PersistentQueue/EMPTY seeds)
+                 (count (first pipe-map))
+                 (count pipe-map)
+                 loop-squares)))
+  ([acc q width height loop-squares]
+   (if (empty? q)
+     acc
+     (let [[x y] (peek q)
+           q' (pop q)
+           ;; TODO maybe DRY up the neighbour-finding
+           neighbours (for [[dx dy] [[-1 0] [1 0] [0 -1] [0 1]]
+                            :let [x' (+ x dx) y' (+ y dy)]
+                            :when (and (>= x' 0) (< x' width)
+                                       (>= y' 0) (< y' height)
+                                       (not (acc [x' y']))
+                                       (not (loop-squares [x' y'])))]
+                        [x' y'])]
+       (recur (into acc neighbours) (into q' neighbours) width height loop-squares)))))
+
+(defn show-square-str [pipe-map-vec square-set]
+  (if (empty? square-set)
+    (str/join "\n" pipe-map-vec)
+    (let [[x y] (first square-set)]
+      (recur (assoc pipe-map-vec y (str
+                                    (doto (StringBuilder. (pipe-map-vec y))
+                                      (.setCharAt x \O))))
+             (disj square-set [x y])))))
