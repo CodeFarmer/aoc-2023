@@ -9,3 +9,5 @@
   [aseq]
   (map #(Integer/parseInt %) aseq))
 
+(defn minverse [amap]
+  (reduce (fn [a [k v]] (assoc a v k)) {} amap))
