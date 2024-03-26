@@ -22,6 +22,12 @@
           (map (fn [[dx dy]] [(+ x dx) (+ y dy)])
                (get exit-offsets tile #{})))))
 
+(defn neighbours-entering [pipe-map [x y]]
+  (into #{} (for [[dx dy] [[-1 0] [1 0] [0 -1] [0 1]]
+                  :let [x' (+ x dx) y' (+ y dy)]
+                  :when (contains? (find-steps pipe-map [x' y']) [x y])]
+              [dx dy])))
+
 (defn guess-exits [pipe-map [x y]]
 
   (into #{}
@@ -53,6 +59,63 @@
    (walk-loop pipe-map (find-start pipe-map)))
   ([pipe-map start-point]
    (-walk-loop #{} pipe-map start-point)))
+
+;; part 2
+
+(def exits-to-tiles
+  (minverse exit-offsets))
+
+(defn guess-tile [pipe-map [x y]]
+  (exits-to-tiles (neighbours-entering pipe-map [x y])))
+
+(defn guess-start-tile [pipe-map]
+  (guess-tile pipe-map (find-start pipe-map)))
+
+;; reading a line from left to right, starting from the outside, only
+;; certain certain state transitions are possible through encountering
+;; loop tiles
+(def scan-states
+  {:outside {\F :top
+             \| :inside
+             \L :bottom}
+   :inside  {\F :bottom
+             \| :outside
+             \L :top}
+   :top     {\7 :outside
+             \J :inside
+             \- :top}
+   :bottom  {\7 :inside
+             \J :outside
+             \- :bottom}})
+
+
+(defn count-row-enclosed-tiles
+  ([astr y aloop]
+   (count-row-enclosed-tiles astr 0 0 y aloop :outside))
+  ([astr n x y aloop state]
+   (cond (>= x (count astr)) n
+         (aloop [x y]) (recur astr n (inc x) y aloop (get-in scan-states [state (.charAt astr x)]))
+         (= state :inside) (recur astr (inc n) (inc x) y aloop state)
+         :default (recur astr n (inc x) y aloop state))))
+
+(defn correct-start-tile [pipe-map]
+  (let [[x y] (find-start pipe-map)
+        t (guess-tile pipe-map [x y])]
+    (assoc pipe-map y (str (doto (StringBuilder. (pipe-map y))
+                                      (.setCharAt x t))))))
+
+(defn count-enclosed-tiles
+  ([pipe-map aloop]
+   (count-enclosed-tiles 0 0 pipe-map aloop))
+  ([n y pipe-map aloop]
+   (if (empty? pipe-map) n
+       (recur (+ n (count-row-enclosed-tiles (first pipe-map) y aloop))
+              (inc y)
+              (rest pipe-map)
+              aloop))))
+
+;; end solution ;; end solution ;; end solution ;; end solution
+;; and now, the stuff that didn't work
 
 ;; assume the map is rectangular eh
 (defn find-edges [pipe-map]
@@ -98,3 +161,4 @@
                                     (doto (StringBuilder. (pipe-map-vec y))
                                       (.setCharAt x \O))))
              (disj square-set [x y])))))
+

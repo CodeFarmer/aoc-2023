@@ -26,11 +26,6 @@
          (testing "from surrounding tiles, guess the exactly two exits from a start tile"
       (is (= #{[1 2] [2 1]} (guess-exits square-loop-map [1 1])))))
 
-(comment 
-  (deftest loop-counting-test
-    (testing "Loops are counted accurately"
-      (is (= 8 (count-loop-steps square-loop-map [1 1]))))))
-
 (deftest loop-walking-test
   (testing "It is possible to follow a loop of pipe and record the route taken"
     (is (= #{[1 2] [1 3] [2 3] [3 3] [3 2] [3 1] [2 1] [1 1]}
@@ -55,26 +50,6 @@ LJ..."
 (deftest part-1-test
   (is (= 6697 (/ (count (walk-loop input-map)) 2))))
 
-(deftest edges-test
-  (testing "the set of edge squares of a tube map are found"
-    (is (= #{[0 0] [1 0] [2 0] [3 0] [4 0]
-             [0 1]                   [4 1]
-             [0 2]                   [4 2]
-             [0 3]                   [4 3]
-             [0 4] [1 4] [2 4] [3 4] [4 4]}
-           (find-edges square-loop-map)))))
-
-(deftest flood-seeds-test
-  (testing "squares on the edges that are definitely outside the loop are found"
-    (is (= #{[0 0] [1 0]              [4 0]
-             [0 1]                    [4 1]
-
-
-
-             [2 4] [3 4] [4 4]}
-           (find-flood-seeds other-loop-map (walk-loop other-loop-map)))
-        )))
-
 (def bigger-loop-map
   (str/split "...........
 .S-------7.
@@ -86,16 +61,6 @@ LJ..."
 .L--J.L--J.
 ..........."
              #"\n"))
-
-(deftest flood-fill-test
-  (testing "Starting from the edges, squares not contained by a loop are filled correctly"
-    (let [loop (walk-loop bigger-loop-map)
-          filled (flood-fill bigger-loop-map
-                             loop)]
-      (is (contains? filled [5 3])
-          "flood fill should eventually reach the interior")
-      (is (not (contains? filled [3 6]))
-          "flood fill should not reach the blank squares inside the loop"))))
 
 
 (def third-loop-map
@@ -124,19 +89,117 @@ L.L7LFJ|||||FJL7||LJ
 L7JLJL-JLJLJL--JLJ.L"
              #"\n"))
 
-(comment "This is where I got to before I realised that flood-fill won't work")
+(deftest tile-guessing-test
+  (testing "Start tiles have their correct tile character deduced"
+    (is (= \F (guess-start-tile third-loop-map)))
+    (is (= \7 (guess-start-tile junk-tiles-map)))
+    (is (= \F (guess-start-tile bigger-loop-map)))
+    (is (= \| (guess-start-tile ["F"
+                                 "S"
+                                 "L"])))))
+
+(deftest tile-correction-test
+  (is (= (str/split
+   "..F7.
+.FJ|.
+FJ.L7
+|F--J
+LJ..."
+   #"\n")
+         (correct-start-tile other-loop-map))))
+
+;; showing why just counting tiles with verticals in it doesn't work
+(def tricky-map
+  [".F----7."
+   ".|....|." ;; this has four inside
+   ".L-7..|." ;; this has two inside
+   "...L--J." ;; and this has none
+   ])
+
+(def squishy-map
+  (str/split 
+   "..........
+.S------7.
+.|F----7|.
+.||OOOO||.
+.||OOOO||.
+.|L-7F-J|.
+.|II||II|.
+.L--JL--J.
+.........."
+   #"\n"))
+
 (deftest counting-enclosed-tiles-test
-  (testing "enclosed tiles are counted correctly without junk tiles present"
-    (let [loop (walk-loop third-loop-map)
-          filled (flood-fill third-loop-map
+
+  (let [loop (walk-loop tricky-map [1 0])]
+    (is (= 0 (count-row-enclosed-tiles (first tricky-map) 0 loop)))
+    (is (= 4 (count-row-enclosed-tiles (second tricky-map) 1 loop))))
+
+  (let [loop (walk-loop bigger-loop-map)]
+    (is (= 0 (count-row-enclosed-tiles (first bigger-loop-map) 0 loop)))
+    (is (= 4 (count-row-enclosed-tiles (nth bigger-loop-map 6) 6 loop))))
+
+  (let [loop (walk-loop squishy-map)]
+    (is (= 0 (count-row-enclosed-tiles (first squishy-map) 0 loop)))
+    (is (= 4 (count-row-enclosed-tiles (nth squishy-map 6) 6 loop))))
+
+  (let [loop (walk-loop squishy-map)
+        map' (correct-start-tile squishy-map)]
+    (is (= 4 (count-enclosed-tiles map' loop)))))
+
+(deftest part-2-test
+  (let [loop (walk-loop input-map)
+        map' (correct-start-tile input-map)]
+    (is (= 423 (count-enclosed-tiles map' loop)))))
+
+;; end solution ;; end solution ;; end solution ;; end solution
+;; and now, the stuff that didn't work
+
+(deftest edges-test
+  (testing "the set of edge squares of a tube map are found"
+    (is (= #{[0 0] [1 0] [2 0] [3 0] [4 0]
+             [0 1]                   [4 1]
+             [0 2]                   [4 2]
+             [0 3]                   [4 3]
+             [0 4] [1 4] [2 4] [3 4] [4 4]}
+           (find-edges square-loop-map)))))
+
+(deftest flood-seeds-test
+  (testing "squares on the edges that are definitely outside the loop are found"
+    (is (= #{[0 0] [1 0]              [4 0]
+             [0 1]                    [4 1]
+
+
+
+             [2 4] [3 4] [4 4]}
+           (find-flood-seeds other-loop-map (walk-loop other-loop-map)))
+        )))
+
+(deftest flood-fill-test
+  (testing "Starting from the edges, squares not contained by a loop are filled correctly"
+    (let [loop (walk-loop bigger-loop-map)
+          filled (flood-fill bigger-loop-map
                              loop)]
-      (println "loop:")
-      (println (show-square-str (into [] third-loop-map) loop))
-      (println)
-      (println "filled:")
-      (println (show-square-str (into [] third-loop-map) filled))
-      
-      (is (= 8 (- (* (count third-loop-map)
-                     (count (first third-loop-map)))
-                  (+ (count loop)
-                     (count filled))))))))
+      (is (contains? filled [5 3])
+          "flood fill should eventually reach the interior")
+      (is (not (contains? filled [3 6]))
+          "flood fill should not reach the blank squares inside the loop"))))
+
+
+
+(comment "This is where I got to before I realised that flood-fill won't work"
+         (deftest counting-enclosed-tiles-test
+           (testing "enclosed tiles are counted correctly without junk tiles present"
+             (let [loop (walk-loop third-loop-map)
+                   filled (flood-fill third-loop-map
+                                      loop)]
+               (println "loop:")
+               (println (show-square-str (into [] third-loop-map) loop))
+               (println)
+               (println "filled:")
+               (println (show-square-str (into [] third-loop-map) filled))
+               
+               (is (= 8 (- (* (count third-loop-map)
+                              (count (first third-loop-map)))
+                           (+ (count loop)
+                              (count filled)))))))))
