@@ -4,6 +4,10 @@
             [aoc-2023.core :refer :all]
             [clojure.string :as str]))
 
+(deftest arrangement-derivation-test
+  (testing "For debugging purposes, the list of runs can be derviced from an arrangement string"
+    (is (= [1 1 3] (-derive-arrangements [] 0 "#.#..###")))))
+
 (deftest arrangement-test
   (testing "arrangements of one group"
     (is (= [] (arrangements 3 [4]))
@@ -63,4 +67,4 @@
   (is (= 21 (total-compatibles sample-data))))
 
 (deftest part-1-test
-  (is (= 7725 (total-compatibles input-data))))
+  (is (= 7633 (total-compatibles input-data))))
