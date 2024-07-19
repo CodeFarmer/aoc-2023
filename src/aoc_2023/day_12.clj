@@ -19,3 +19,44 @@
   (let [[rec runstr] (str/split astr #" ")
         runs (intify-seq (str/split runstr #","))]
     [rec runs]))
+
+(defn might-be-broken? [achar]
+  (#{\# \?} achar))
+
+(defn might-be-working? [achar]
+  (#{\. \?} achar))
+
+(defn run-possible-at?
+  ([astr run-length start]
+   (run-possible-at? astr run-length start false))
+  ([astr run-length start pad?]
+   (and
+    (every? might-be-working? (take start astr))
+    (every? might-be-broken? (take run-length (drop start astr)))
+    (if pad? (and (> (count astr) (+ start run-length))
+                  (might-be-working? (nth astr (+ start run-length))))
+        true))))
+
+(defn count-compatibles [astr reports]
+
+  (if
+      (empty? reports) (if (every? might-be-working? astr)
+                         1 
+                         0)
+      (let [r (first reports)
+            rest (rest reports)
+            starts (range 0 (- (count astr) (dec r)))
+            pad? (not (empty? rest))]
+
+        (->> starts
+             (filter #(run-possible-at? astr r % pad?))
+             (map (fn [run] (count-compatibles (.substring astr (+ run r (if pad? 1 0))) rest)))
+             (reduce +))
+        
+          )
+        ))
+
+(defn total-compatibles [data-set]
+  (->> data-set
+       (map (fn [[astr reports]] (count-compatibles astr reports)))
+       (reduce +)))
