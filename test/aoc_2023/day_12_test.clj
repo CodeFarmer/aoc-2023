@@ -88,3 +88,13 @@
 
 (deftest part-1-test
   (is (= 7633 (total-compatibles input-data))))
+
+(deftest expanded-sample-test
+  (is (= 525152 (total-expanded-compatibles sample-data))))
+
+(deftest part-2-test
+  (is (= 23903579139437 (total-expanded-compatibles input-data))))
+
+(comment
+  ;TODO: consider FSA?
+  )

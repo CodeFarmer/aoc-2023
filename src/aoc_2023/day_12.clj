@@ -37,26 +37,33 @@
                   (might-be-working? (nth astr (+ start run-length))))
         true))))
 
-(defn count-compatibles [astr reports]
+(def count-compatibles
+  (memoize 
+   (fn [astr reports]
+     (if
+         (empty? reports) (if (every? might-be-working? astr)
+                            1 
+                            0)
+         (let [r (first reports)
+               rest (rest reports)
+               starts (range 0 (- (count astr) (dec r)))
+               pad? (not (empty? rest))]
 
-  (if
-      (empty? reports) (if (every? might-be-working? astr)
-                         1 
-                         0)
-      (let [r (first reports)
-            rest (rest reports)
-            starts (range 0 (- (count astr) (dec r)))
-            pad? (not (empty? rest))]
-
-        (->> starts
-             (filter #(run-possible-at? astr r % pad?))
-             (map (fn [run] (count-compatibles (.substring astr (+ run r (if pad? 1 0))) rest)))
-             (reduce +))
-        
-          )
-        ))
+           (->> starts
+                (filter #(run-possible-at? astr r % pad?))
+                (map (fn [run] (count-compatibles (.substring astr (+ run r (if pad? 1 0))) rest)))
+                (reduce +))
+           
+           )
+         ))))
 
 (defn total-compatibles [data-set]
   (->> data-set
-       (map (fn [[astr reports]] (count-compatibles astr reports)))
+       (pmap (fn [[astr reports]] (count-compatibles astr reports)))
        (reduce +)))
+
+(defn total-expanded-compatibles [data-set]
+  (->> data-set
+       (map (fn [[astr reports]] [(str/join "?" (repeat 5 astr))
+                                  (flatten (repeat 5 reports))]))
+       total-compatibles))
