@@ -13,9 +13,6 @@
    \J #{[-1  0] [ 0 -1]}
    })
 
-(defn get-tile [pipe-map [x y]]
-  (get-in pipe-map [y x]))
-
 (defn find-steps [pipe-map [x y]]
   (let [tile (get-tile pipe-map [x y])]
     (into #{}

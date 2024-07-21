@@ -7,22 +7,6 @@
 ; I have this dumb idea that I'll be able to use the same symmetry
 ; code for horizontal and vertical by rotating the maps
 
-(deftest map-rotate-test
-  (is (= [] (map-rotate [])))
-  (is (= ["1"] (map-rotate ["1"])))
-  (is (= ["1"
-          "2"] (map-rotate ["12"])))
-  (is (= ["21" (map-rotate ["1"
-                            "2"])]))
-  
-  (is (= ["741"
-          "852"
-          "963"]
-         (map-rotate ["123"
-                      "456"
-                      "789"]))))
-
-
 (def sample-0
   (str/split
    "#.##..##.

@@ -4,14 +4,6 @@
             [clojure.set]))
 
 
-(defn map-rotate
-  "Given a map expressed as a vector of strings (each a single line of the map), rotate it 90 degrees clockwise"
-  ([avec] (map-rotate avec []))
-  ([avec acc]
-   (if (empty? (first avec))
-     acc
-     (recur (map rest avec) (conj acc (apply str (reverse (map first avec))))))))
-
 (defn symmetrical-at?
   "Given a vector and an index, is the vector before that index repeated in reverse from there until the end of the vector?"
   [avec index]

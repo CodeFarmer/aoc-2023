@@ -10,6 +10,8 @@
         :when (= \# (.charAt astr x))]
     [x y]))
 
+;; TODO this is potentially useful for core
+
 (defn find-galaxies
   ([starfield]
    (find-galaxies #{} 0 starfield))
