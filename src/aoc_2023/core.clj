@@ -15,13 +15,21 @@
 ;; functions dealing with 2D maps expressed as vectors of
 ;; strings (rows)
 
-(defn map-rotate
+(defn tmap-rotate-right
   "Given a map expressed as a vector of strings (each a single line of the map), rotate it 90 degrees clockwise"
-  ([avec] (map-rotate avec []))
+  ([avec] (tmap-rotate-right avec []))
   ([avec acc]
    (if (empty? (first avec))
      acc
      (recur (map rest avec) (conj acc (apply str (reverse (map first avec))))))))
+
+(defn tmap-rotate-left
+  "Given a map expressed as a vector of strings (each a single line of the map), rotate it 90 degrees clockwise"
+  ([avec] (tmap-rotate-left avec '()))
+  ([avec acc]
+   (if (empty? (first avec))
+     (into [] acc)
+     (recur (map rest avec) (conj acc (apply str (map first avec)))))))
 
 (defn get-tile
   "Given a map expressed as a vector of strings, find the tile character ar [x y]"

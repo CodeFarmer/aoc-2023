@@ -42,7 +42,7 @@
     (is (symmetrical-at? sample-1 4)))
 
   (testing "symmetry data works by rotating"
-    (is (symmetrical-at? (map-rotate sample-0) 5))))
+    (is (symmetrical-at? (tmap-rotate-right sample-0) 5))))
 
 
 (deftest symmetry-line-test
@@ -53,7 +53,7 @@
 
   (is (= 4 (symmetry-line sample-1)))
   (is (nil? (symmetry-line sample-0)))
-  (is (= 5 (symmetry-line (map-rotate sample-0))))
+  (is (= 5 (symmetry-line (tmap-rotate-right sample-0))))
 
   (testing "horizontal and vertical symmetry"
     (is (= 0 (horizontal-symmetry-line sample-0)))

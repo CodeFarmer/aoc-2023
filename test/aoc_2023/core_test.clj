@@ -10,16 +10,24 @@
 
 
 (deftest map-rotate-test
-  (is (= [] (map-rotate [])))
-  (is (= ["1"] (map-rotate ["1"])))
-  (is (= ["1"
-          "2"] (map-rotate ["12"])))
-  (is (= ["21" (map-rotate ["1"
-                            "2"])]))
-  
-  (is (= ["741"
-          "852"
-          "963"]
-         (map-rotate ["123"
-                      "456"
-                      "789"]))))
+  (testing "rotation clockwise"
+    (is (= [] (tmap-rotate-right [])))
+    (is (= ["1"] (tmap-rotate-right ["1"])))
+    (is (= ["1"
+            "2"] (tmap-rotate-right ["12"])))
+    (is (= ["21" (tmap-rotate-right ["1"
+                                     "2"])]))
+    
+    (is (= ["741"
+            "852"
+            "963"]
+           (tmap-rotate-right ["123"
+                               "456"
+                               "789"]))))
+  (testing "rotation counterclockwise"
+    (is (= ["369"
+            "258"
+            "147"]
+           (tmap-rotate-left ["123"
+                              "456"
+                              "789"])))))

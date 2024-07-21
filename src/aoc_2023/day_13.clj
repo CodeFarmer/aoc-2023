@@ -21,7 +21,7 @@
   (first (all-symmetry-lines avec)))
 
 (defn all-vertical-symmetry-lines [avec]
-  (all-symmetry-lines (map-rotate avec)))
+  (all-symmetry-lines (tmap-rotate-right avec)))
 
 (defn vertical-symmetry-line [avec]
   (let [n (first (all-vertical-symmetry-lines avec))]
