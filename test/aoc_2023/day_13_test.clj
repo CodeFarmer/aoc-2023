@@ -89,3 +89,60 @@
 
 (deftest part-1-test
   (is (= 31739 (reduce + (map score input-data)))))
+
+
+(deftest smudge-test
+  (is (= #{["##"
+            "##"]
+           [".."
+            "##"]
+           [".#"
+            ".#"]
+           [".#"
+            "#."]}
+         (into #{}
+               (generate-smudges [".#"
+                                  "##"])))))
+
+(deftest smudge-finding-test
+  (let [smudged (smudge-at sample-0 0 0)]
+    (comment 
+      (println (symmetry-lines sample-0))
+      (println (symmetry-lines smudged))
+      (println (str/join "\n" smudged)))
+
+    (is (= [5]
+           (all-vertical-symmetry-lines smudged)))
+    (is (= [3]
+           (all-horizontal-symmetry-lines smudged))))
+
+  (is (= [0 3] (find-smudged-reflection sample-0)))
+  (is (= [0 1] (find-smudged-reflection sample-1))))
+
+(def smudge-bug-example
+  (str/split
+   "##..#..#.
+..###..##
+###.###..
+###......
+....#..#.
+...#.##.#
+.....##..
+##...##..
+##.#....#
+" #"\n"))
+
+;; [1 0] [nil nil]
+
+;; found the bug: if there is a new symmetry line that comes after the old one, it doesn't get seen
+
+(deftest smudge-bug-test
+  (is (= [6 0] (find-smudged-reflection smudge-bug-example))))
+
+
+(deftest smudged-scoring-test
+  (is (= 300 (smudged-score sample-0)))
+  (is (= 100 (smudged-score sample-1))))
+
+(deftest part-2-test
+  (is (= 31539 (reduce + (map smudged-score input-data)))))
