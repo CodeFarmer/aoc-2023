@@ -36,3 +36,23 @@
   [tile-map [x y]]
   (get-in tile-map [y x]))
 
+;; finding cycles in sequences
+
+;; assumptions: the sequence is deterministic in that once the first
+;; member of a cycle appears, the rest of the cycle is certain to
+;; follow it
+;; (for example, the output of core.iterate)
+
+(defn find-cycle
+  "In a deterministic stateless sequence (for example the output of core.iterate), find the first index of the beginning of a cycle, and return the cycle contents"
+  ([aseq]
+   (find-cycle #{} aseq aseq))
+  ([acc aseq looking-seq]
+   (if (empty? looking-seq) nil
+       (let [x (first looking-seq)]
+         (if (acc x) ;; just finished the cycle  
+           (let [start (drop-while #(not (= x %)) aseq)
+                 tail (take-while #(not (= x %)) (rest start))]
+             (conj tail x))
+           (recur (conj acc x) aseq (rest looking-seq)))
+         ))))

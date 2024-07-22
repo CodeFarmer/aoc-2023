@@ -31,3 +31,14 @@
            (tmap-rotate-left ["123"
                               "456"
                               "789"])))))
+
+
+(deftest cycle-finding-test
+  (is (= nil  (find-cycle [1 2 3 4 5]))
+      "No cycle found")
+  (is (= [1] (find-cycle [1 1 1 1])))
+
+  (is (= [1 2] (find-cycle [1 2 1 2]))
+      "Cycles at the beginning should be found")
+  (is (= [2 3 4] (find-cycle [1 2 3 4 2 3 4 2 3 4]))
+      "Cycles not at the beginning should be found"))
