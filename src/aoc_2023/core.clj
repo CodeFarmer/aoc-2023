@@ -56,3 +56,15 @@
              (conj tail x))
            (recur (conj acc x) aseq (rest looking-seq)))
          ))))
+
+(defn nth-with-cycles
+  "Given a sequence with a cycle in it, guess the nth element of the sequence"
+  [aseq n]
+  (let [cyc (find-cycle aseq)
+        cl (count cyc)
+        x (first cyc)
+        prelude (take-while #(not (= x %)) aseq)
+        pl (count prelude)]
+    (if (< n pl)
+      (nth prelude n)
+      (nth cyc (mod (- n pl) cl)))))

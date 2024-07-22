@@ -42,3 +42,11 @@
       "Cycles at the beginning should be found")
   (is (= [2 3 4] (find-cycle [1 2 3 4 2 3 4 2 3 4]))
       "Cycles not at the beginning should be found"))
+
+(deftest nth-with-cycles-test
+  (is (= 1 (nth-with-cycles [1 2 3 2 3] 0)))
+  (is (= 2 (nth-with-cycles [1 2 3 2 3] 3)))
+  (is (= 2 (nth-with-cycles [1 2 3 2 3] 15))
+      "n can be off the end of the original seq")
+  (is (= 2 (nth-with-cycles [1 2 3 2 3] 1000000015))
+      "n can be really large and not cause problems"))
