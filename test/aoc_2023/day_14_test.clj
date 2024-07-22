@@ -87,6 +87,11 @@ O..#.OO...
 #..OO#...."
    #"\n"))
 
+
+(deftest scoring-totals-test
+  (is (= 136
+         (total-score-rocks-distance-bottom sample-1))))
+
 (deftest spin-cycle-test
   (is (= sample-2 (spin-cycle sample-0))))
 

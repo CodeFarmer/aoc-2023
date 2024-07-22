@@ -32,6 +32,14 @@
 (defn total-score-rocks-distance-right [tmap]
   (reduce + (map score-rocks-distance-right tmap)))
 
+;; rotating the board back again to get the score was annoying me
+(defn total-score-rocks-distance-bottom [tmap]
+  (let [height (count tmap)]
+    (reduce +
+            (map (fn [i] (* (- height i)
+                            (count (filter #(= \O %) (nth tmap i)))))
+                 (range 0 height)))))
+
 ;; Each cycle tilts the platform four times so that the rounded rocks
 ;; roll north, then west, then south, then east
 (def spin-cycle
