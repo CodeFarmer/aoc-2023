@@ -95,9 +95,14 @@ O..#.OO...
 (deftest spin-cycle-test
   (is (= sample-2 (spin-cycle sample-0))))
 
-;; this doesn't work, is memoize() failing me due to some referential inequality or something?
-; (first (drop (dec 1000000000) (iterate spin-cycle sample-0)))
-;; TODO 1. explore where/if memoization is going wrong, because that's interesting
-;; TODO 2. write a version of iterate() that takes an argument n, detects cycles and fast-forwards
+;; this actually works by brute force (a few minutes) on a 17600K but
+;; it's embarrassing
+;; (first (drop (dec 1000000000) (iterate spin-cycle sample-0)))
 
+;; This makes it very obvious there is a cycle
+;; (take 20 (map total-score-rocks-distance-bottom (iterate spin-cycle sample-0)))
+;; -> (104 87 69 69 69 65 64 65 63 68 69 69 65 64 65 63 68 69 69 65)
 
+(deftest part-2-test
+  (is (= 99641
+         (total-score-rocks-distance-bottom (nth-with-cycles (iterate spin-cycle input-data) 1000000000)))))
