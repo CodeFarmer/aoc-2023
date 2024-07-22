@@ -92,3 +92,7 @@ O..#.OO...
 
 ;; this doesn't work, is memoize() failing me due to some referential inequality or something?
 ; (first (drop (dec 1000000000) (iterate spin-cycle sample-0)))
+;; TODO 1. explore where/if memoization is going wrong, because that's interesting
+;; TODO 2. write a version of iterate() that takes an argument n, detects cycles and fast-forwards
+
+

@@ -29,6 +29,9 @@
          (reduce +)))
   )
 
+(defn total-score-rocks-distance-right [tmap]
+  (reduce + (map score-rocks-distance-right tmap)))
+
 ;; Each cycle tilts the platform four times so that the rounded rocks
 ;; roll north, then west, then south, then east
 (def spin-cycle
