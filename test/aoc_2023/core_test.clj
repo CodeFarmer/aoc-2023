@@ -50,3 +50,10 @@
       "n can be off the end of the original seq")
   (is (= 2 (nth-with-cycles [1 2 3 2 3] 1000000015))
       "n can be really large and not cause problems"))
+
+;; other
+
+(deftest ctoi-test
+  (is (= 0 (ctoi \0)))
+  (is (= 1 (ctoi \1)))
+  (is (= 9 (ctoi \9))))

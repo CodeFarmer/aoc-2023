@@ -75,3 +75,6 @@
     (if (< n pl)
       (nth prelude n)
       (nth cyc (mod (- n pl) cl)))))
+
+(defn ctoi [achar]
+  (- (int achar) 48))
