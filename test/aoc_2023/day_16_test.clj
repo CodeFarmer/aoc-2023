@@ -68,3 +68,20 @@
 
 (deftest part-1-test
   (is (= 6514 (count (energized-tiles :right [0 0] input-data)))))
+
+(deftest starting-points-test
+  (is (= [[:down  [0 0]] [:down  [1 0]]
+          [:right [0 0]] [:right [0 1]]
+          [:up    [0 1]] [:up    [1 1]]
+          [:left  [1 0]] [:left  [1 1]]]
+         (starting-points [".."
+                           ".."]))))
+
+(deftest maximising-test
+  (is (= 51 (apply max (map (fn [[dir point]]
+                              (count (energized-tiles dir point sample-data)))
+                            (starting-points sample-data))))))
+(deftest part-2-test
+  (is (= 8089 (apply max (map (fn [[dir point]]
+                                (count (energized-tiles dir point input-data)))
+                              (starting-points input-data))))))

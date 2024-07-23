@@ -58,3 +58,14 @@
 (defn energized-tiles
   ([dir point tmap]
    (-energized-tiles #{[dir point]} (next-squares dir point tmap) tmap)))
+
+(defn starting-points [tmap]
+  (let [h (count tmap)
+        w (count (first tmap))
+        hi (range 0 h)
+        wi (range 0 w)]
+    (concat
+     (map (fn [x] [:down  [x 0]]) wi)
+     (map (fn [y] [:right [0 y]]) hi)
+     (map (fn [x] [:up    [x (dec h)]]) wi)
+     (map (fn [y] [:left  [(dec w) y]]) hi))))
