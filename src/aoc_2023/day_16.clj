@@ -25,13 +25,6 @@
   (if (= \. tile) [dir]
       (get-in reflections [tile dir])))
 
-(def directions
-  {:right [ 1  0]
-   :left  [-1  0]
-   :up    [ 0 -1]
-   :down  [ 0  1]
-   })
-
 (defn next-squares [dir point tmap]
   (let [width (count (first tmap))
         height (count tmap)]

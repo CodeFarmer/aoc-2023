@@ -36,6 +36,13 @@
   [tile-map [x y]]
   (get-in tile-map [y x]))
 
+(def directions
+  {:right [ 1  0]
+   :left  [-1  0]
+   :up    [ 0 -1]
+   :down  [ 0  1]
+   })
+
 ;; finding cycles in sequences
 
 ;; assumptions: the sequence is deterministic in that once the first
