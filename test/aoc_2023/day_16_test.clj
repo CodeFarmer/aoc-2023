@@ -78,11 +78,11 @@
                            ".."]))))
 
 (deftest maximising-test
-  (is (= 51 (apply max (map (fn [[dir point]]
+  (is (= 51 (apply max (pmap (fn [[dir point]]
                               (count (energized-tiles dir point sample-data)))
                             (starting-points sample-data))))))
 
 (deftest part-2-test
-  (is (= 8089 (apply max (map (fn [[dir point]]
+  (is (= 8089 (apply max (pmap (fn [[dir point]]
                                 (count (energized-tiles dir point input-data)))
                               (starting-points input-data))))))
