@@ -32,6 +32,14 @@
                               "456"
                               "789"])))))
 
+(def simple-city
+  ["1133"
+   "3133"
+   "3111"])
+
+(deftest neighbour-finding-test
+  (is (= [[1 0] [0 1]]
+         (tmap-find-neighbours [0 0] simple-city))))
 
 (deftest cycle-finding-test
   (is (= nil  (find-cycle [1 2 3 4 5]))

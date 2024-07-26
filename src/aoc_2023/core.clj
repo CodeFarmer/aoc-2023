@@ -15,6 +15,23 @@
 ;; functions dealing with 2D maps expressed as vectors of
 ;; strings (rows)
 
+(defn tmap-height [tmap]
+  (count tmap))
+
+(defn tmap-width [tmap]
+  (count (first tmap)))
+
+(def neighbour-deltas
+  [[-1 0] [0 -1] [1 0] [0 1]])
+
+(defn tmap-find-neighbours [point tmap]
+  (let [width (tmap-width tmap)
+        height (tmap-height tmap)]
+    (->> neighbour-deltas
+         (map #(map + point %))
+         (filter (fn [[x y]] (and (>= x 0) (< x width)
+                                  (>= y 0) (< y height)))))))
+
 (defn tmap-rotate-right
   "Given a map expressed as a vector of strings (each a single line of the map), rotate it 90 degrees clockwise"
   ([avec] (tmap-rotate-right avec []))
