@@ -26,9 +26,37 @@
    "3133"
    "3111"])
 
+(def simple-square-data
+  {[0 0] {:prev nil   :cost 0}
+   [1 0] {:prev [0 0] :cost 1}
+   [1 1] {:prev [1 0] :cost 2}
+   [1 2] {:prev [1 1] :cost 3}
+   [2 2] {:prev [1 2] :cost 4}
+   [3 2] {:prev [2 2] :cost 5}})
+
+(deftest unwinding-test
+  (is (= [[0 0] [1 0] [1 1] [1 2] [2 2] [3 2]]
+         (unwind-path simple-square-data [3 2]))))
+
+(deftest journey-cost-test
+  (is (= 6 (cost-from simple-square-data simple-city [1 2] [0 2]))))
+
+(deftest lower-paths-finding-test
+  (let [square-data {[0 0] {:prev nil   :cost 0}
+                     [1 0] {:prev [0 0] :cost 1}
+                     [1 1] {:prev [1 0] :cost 5}}]
+    (is (= {[2 0] {:prev [1 0] :cost 4} ;; unseen node
+            [1 1] {:prev [1 0] :cost 2} ;; shorter path
+            }
+           (find-lower-paths square-data simple-city [1 0] (tmap-find-neighbours [1 0] simple-city))))))
+
 (deftest path-finding-test
+  (is (= [[0 0]]
+         (find-lowest-path ["5"])))
+  
   (is (= [[0 0] [0 1]] (find-lowest-path ["5"
                                           "6"])))
+  
   (comment 
     (is (= [[0 0] [1 0] [1 1] [1 2] [2 2] [3 2]]
            (find-lowest-path simple-city)))))

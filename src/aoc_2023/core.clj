@@ -24,6 +24,7 @@
 (def neighbour-deltas
   [[-1 0] [0 -1] [1 0] [0 1]])
 
+;; FIXME switch args around
 (defn tmap-find-neighbours [point tmap]
   (let [width (tmap-width tmap)
         height (tmap-height tmap)]

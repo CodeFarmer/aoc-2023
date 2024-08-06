@@ -16,22 +16,52 @@
 
 ;; TODO move this into core
 
+(defn unwind-path [square-data end]
+  (loop [acc '()
+         p end]
+    (let [{:keys [cost prev]} (get square-data p)]
+      (if (not prev) (conj acc p)
+          (recur (conj acc p) prev)))))
+
+;; consider making the map contain ints and not do the ctoi
+(defn cost-from [square-data tmap p q]
+  "how much is the journey cost to q, when coming from p with a known journey cost"
+  (+ (ctoi (get-tile tmap q)) (:cost (square-data p))))
+
+(defn find-lower-paths [square-data tmap p points]
+  (reduce (fn [new-data q]
+             (let [d  (get-in square-data [q :cost] Integer/MAX_VALUE)
+                   d' (cost-from square-data tmap p q)]
+               (if (< d' d) (assoc new-data q {:prev p :cost d'})
+                   new-data)))
+          {}
+          points))
+
 (defn find-lowest-path
   ([tmap]
-   (find-lowest-path tmap [0 0] [dec (tmap-width tmap) (dec (tmap-height tmap))]))
+   (find-lowest-path tmap [0 0] [(dec (tmap-width tmap)) (dec (tmap-height tmap))]))
   ([tmap start end]
    (find-lowest-path {start {:prev nil :cost 0}}
                      (conj clojure.lang.PersistentQueue/EMPTY start)
-                     tmap start end))
-  ([square-data q tmap p end]
+                     tmap
+                     end))
+
+  ([square-data ;; annotations for visited squares
+    q           ;; current squares under consideration [square prev]
+    tmap 
+    end]
+   
    (if (empty? q)
-     ;; unwind the traversal data back, TODO move this out?
-     (loop [acc '()
-            p end]
-       (let [{:keys [cost prev]} (get square-data p)]
-         (if (not prev) (conj acc p)
-             (recur (conj acc p) prev))))
+     (unwind-path square-data end)
      
-     (let [neighbours (tmap-find-neigbours tmap)]
-       ;; TODO THIS IS WHERE YOU WERE
+     (let [p (peek q)]
+       (if (= end p)
+         (recur square-data (pop q) tmap end)
+         (let [neighbours (tmap-find-neighbours p tmap)
+               lower-neighbour-data (find-lower-paths square-data tmap p neighbours)]
+           (recur (into square-data lower-neighbour-data)
+                  (into (pop q) (keys lower-neighbour-data))
+                  tmap
+                  end)))
+
        ))))
