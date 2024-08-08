@@ -1,5 +1,6 @@
 (ns aoc-2023.day-17
   (:require [aoc-2023.core :refer :all]
+            [shams.priority-queue :as pq]
             [clojure.string :as str]))
 
 ;; approach: BFS (queue-based) where candidate squares are chosen if
@@ -30,38 +31,54 @@
 
 (defn find-lower-paths [square-data tmap p points]
   (reduce (fn [new-data q]
-             (let [d  (get-in square-data [q :cost] Integer/MAX_VALUE)
-                   d' (cost-from square-data tmap p q)]
-               (if (< d' d) (assoc new-data q {:prev p :cost d'})
-                   new-data)))
+            (let [d  (get-in square-data [q :cost] Integer/MAX_VALUE)
+                  d' (cost-from square-data tmap p q)]
+              (if (< d' d) (assoc new-data q {:prev p :cost d'})
+                  new-data)))
           {}
           points))
 
-(defn find-lowest-path
-  ([tmap]
-   (find-lowest-path tmap [0 0] [(dec (tmap-width tmap)) (dec (tmap-height tmap))]))
+(defn dijkstra-walk
   ([tmap start end]
-   (find-lowest-path {start {:prev nil :cost 0}}
-                     (conj clojure.lang.PersistentQueue/EMPTY start)
-                     tmap
-                     end))
-
+   (dijkstra-walk {start {:prev nil :cost 0}}
+                  (conj (pq/priority-queue #(- (second %))) [start 0])
+                  tmap
+                  end))
   ([square-data ;; annotations for visited squares
     q           ;; current squares under consideration [square prev]
     tmap 
     end]
    
    (if (empty? q)
-     (unwind-path square-data end)
+     square-data
      
-     (let [p (peek q)]
+     (let [[p c] (peek q)]
        (if (= end p)
          (recur square-data (pop q) tmap end)
          (let [neighbours (tmap-find-neighbours p tmap)
                lower-neighbour-data (find-lower-paths square-data tmap p neighbours)]
            (recur (into square-data lower-neighbour-data)
-                  (into (pop q) (keys lower-neighbour-data))
+                  (into (pop q) (map (fn [[k v]] [k (:cost v)]) lower-neighbour-data))
                   tmap
                   end)))
 
        ))))
+
+(defn find-lowest-path
+  ([tmap]
+   (find-lowest-path tmap [0 0] [(dec (tmap-width tmap)) (dec (tmap-height tmap))]))
+  ([tmap start end]
+   (unwind-path (dijkstra-walk tmap start end) end)))
+
+(defn write-path [tmap square-data end]
+  (loop [tmap tmap
+         p end]
+    (let [{:keys [cost prev]} (get square-data p)]
+      (if (not prev) tmap
+          (let [[dx dy] (map - prev p)]
+            ;; FIXME assoc-in does not work on strings, add to core
+            (recur (tmap-update tmap p (case [dx dy]
+                                         [ 0  1] \^
+                                         [ 1  0] \<
+                                         [ 0 -1] \V
+                                         [-1  0] \>)) prev))))))

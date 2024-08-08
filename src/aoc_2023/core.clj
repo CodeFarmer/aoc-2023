@@ -61,6 +61,14 @@
    :down  [ 0  1]
    })
 
+(defn tmap-update [tmap [x y] c]
+  (assoc tmap y
+         (let [row (get tmap y)]
+           (str (.substring row 0 x) c (.substring row (inc x))))))
+
+(defn print-tmap [tmap]
+  (doseq [r tmap] (println r)))
+
 ;; finding cycles in sequences
 
 ;; assumptions: the sequence is deterministic in that once the first

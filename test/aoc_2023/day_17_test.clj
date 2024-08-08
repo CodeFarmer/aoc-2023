@@ -26,6 +26,11 @@
    "3133"
    "3111"])
 
+(def simple-path
+  ["1>33"
+   "3V33"
+   "3V>>"])
+
 (def simple-square-data
   {[0 0] {:prev nil   :cost 0}
    [1 0] {:prev [0 0] :cost 1}
@@ -57,6 +62,41 @@
   (is (= [[0 0] [0 1]] (find-lowest-path ["5"
                                           "6"])))
   
-  (comment 
-    (is (= [[0 0] [1 0] [1 1] [1 2] [2 2] [3 2]]
-           (find-lowest-path simple-city)))))
+  (is (= [[0 0] [1 0] [1 1] [1 2] [2 2] [3 2]]
+         (find-lowest-path simple-city))))
+
+(def path-writing-test
+  (is (= simple-path
+         (write-path simple-city
+                     (dijkstra-walk simple-city [0 0] [3 2]) [3 2]))))
+
+(def sample-path
+  (str/split
+   "2>>34^>>>1323
+32v>>>35v5623
+32552456v>>54
+3446585845v52
+4546657867v>6
+14385987984v4
+44578769877v6
+36378779796v>
+465496798688v
+456467998645v
+12246868655<v
+25465488877v5
+43226746555v>"
+   #"\n"))
+
+ 
+(deftest max-three-in-a-direction-test
+  (let [walk (dijkstra-walk sample-data [0 0] [12 12])
+        path (write-path sample-data walk [12 12])]
+    (print-tmap sample-data)
+    (println)
+    (print-tmap sample-path)
+    (println)
+    (print-tmap path)
+    (println)
+    (println (walk [12 12]))
+    (is (= sample-path
+           path))))

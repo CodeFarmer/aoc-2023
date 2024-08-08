@@ -37,6 +37,12 @@
    "3133"
    "3111"])
 
+(deftest tmap-update-test
+  (is (= ["1133"
+          "31K3"
+          "3111"]
+         (tmap-update simple-city [2 1] \K))))
+
 (deftest neighbour-finding-test
   (is (= [[1 0] [0 1]]
          (tmap-find-neighbours [0 0] simple-city))))
